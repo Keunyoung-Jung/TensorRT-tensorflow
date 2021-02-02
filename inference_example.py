@@ -2,24 +2,6 @@ import os
 import numpy as np
 from pred_trt import Tf_TRT
 
-st = time.time()
-# resnext = load_model(model_path+'/resnet_v2/best_gobot_model_acc.h5')
-# model_dict['resnext']=resnext
-# print('Loaded resnext model ',time.time()-st,'sec')
-model_name = 'resnet'
-resnet = Tf_TRT(model_path,model_name,['input_1'],['probs/Softmax'])
-model_dict['resnet']=resnet
-print(f'Loaded {model_name} model',time.time()-st,'sec')
-
-model_name = 'mobilenet'
-mobilenet = Tf_TRT(model_path,model_name,['input_1'],['probs/Softmax'])
-model_dict['mobilenet']=mobilenet
-print(f'Loaded {model_name} model',time.time()-st,'sec')
-
-print('loaded model complete')
-
-print('-'*20)
-
 def predict(model,frame):
     frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
     frame = cv2.resize(frame,(150,150))
@@ -50,8 +32,23 @@ def make_json(output_data,accuracy):
 
     
 if __name__=='__main__' :
-	image = cv2.imread('test.jpg')
-	predict_arr = []
+    st = time.time()
+    model_name = 'resnet'
+    resnet = Tf_TRT(model_path,model_name,['input_1'],['probs/Softmax'])
+    model_dict['resnet']=resnet
+    print(f'Loaded {model_name} model',time.time()-st,'sec')
+
+    model_name = 'mobilenet'
+    mobilenet = Tf_TRT(model_path,model_name,['input_1'],['probs/Softmax'])
+    model_dict['mobilenet']=mobilenet
+    print(f'Loaded {model_name} model',time.time()-st,'sec')
+
+    print('loaded model complete')
+
+    print('-'*20)
+
+    image = cv2.imread('test.jpg')
+    predict_arr = []
     for name,model in model_dict.items() :
         pizza_name,acc = predict(model,image)
         predict_arr.append([name,output_data,accuracy])
